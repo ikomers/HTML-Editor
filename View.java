@@ -122,11 +122,22 @@ public class View extends JFrame implements ActionListener {
     public void resetUndo() {
         undoManager.discardAllEdits();
     }
-    
-     /**
-     * If an HTML panel with index 0 is selected, returns true
-     */
+
     public boolean isHtmlTabSelected() {
         return this.tabbedPane.getSelectedIndex() == 0;
+    }
+
+    public void selectHtmlTab() {
+        tabbedPane.setSelectedIndex(0);
+        resetUndo();
+    }
+
+    public void update() {
+        htmlTextPane.setDocument(controller.getDocument());
+    }
+
+    public void showAbout() {
+        Object message = "Here is the best HTML editor";
+        JOptionPane.showMessageDialog(tabbedPane, message, "About", JOptionPane.INFORMATION_MESSAGE);
     }
 }
