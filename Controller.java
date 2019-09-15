@@ -9,6 +9,7 @@ import javax.swing.text.html.HTMLEditorKit;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.StringWriter;
 
 public class Controller {
 
@@ -58,5 +59,15 @@ public class Controller {
         } catch (IOException | BadLocationException e) {
             ExceptionHandler.log(e);
         }
+    }
+
+    public String getPlainText() {
+        StringWriter writer = new StringWriter();
+        try {
+            new HTMLEditorKit().write(writer, document, 0, document.getLength());
+        } catch (IOException | BadLocationException e) {
+            ExceptionHandler.log(e);
+        }
+        return writer.toString();
     }
 }
