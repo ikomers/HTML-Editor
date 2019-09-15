@@ -122,4 +122,11 @@ public class View extends JFrame implements ActionListener {
     public void resetUndo() {
         undoManager.discardAllEdits();
     }
+    
+     /**
+     * If an HTML panel with index 0 is selected, returns true
+     */
+    public boolean isHtmlTabSelected() {
+        return this.tabbedPane.getSelectedIndex() == 0;
+    }
 }
