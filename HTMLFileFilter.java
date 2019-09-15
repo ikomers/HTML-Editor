@@ -11,7 +11,6 @@ public class HTMLFileFilter extends FileFilter {
         if (f.isDirectory()) {
             return true;
         }
-        String[] name = ".".split(f.getName());
         return (f.getName().toLowerCase().endsWith(".html") || f.getName().toLowerCase().endsWith(".htm"));
     }
 
