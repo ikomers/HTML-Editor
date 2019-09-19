@@ -43,9 +43,9 @@ public class Controller {
     }
 
     public void resetDocument() {
-        UndoListener listener = view.getUndoListener();
+     
         if (document != null) {
-            this.document.removeUndoableEditListener(listener);
+            this.document.removeUndoableEditListener(view.getUndoListener());
         }
         document = (HTMLDocument) new HTMLEditorKit().createDefaultDocument();
         document.addUndoableEditListener(view.getUndoListener());
