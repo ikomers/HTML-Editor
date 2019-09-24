@@ -1,16 +1,10 @@
 package com.javarush.task.task32.task3209;
 
-import com.javarush.task.task32.task3209.listeners.UndoListener;
-
-import javax.print.attribute.standard.NumberUp;
+import javax.swing.*;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.*;
 
 public class Controller {
 
@@ -23,10 +17,10 @@ public class Controller {
     }
 
     public static void main(String[] args) {
-        View view = new View();
-        Controller controller = new Controller(view);
-        view.setController(controller);
-        view.init();
+        View mainView = new View();
+        Controller controller = new Controller(mainView);
+        mainView.setController(controller);
+        mainView.init();
         controller.init();
     }
 
@@ -43,9 +37,8 @@ public class Controller {
     }
 
     public void resetDocument() {
-     
         if (document != null) {
-            this.document.removeUndoableEditListener(view.getUndoListener());
+            document.removeUndoableEditListener(view.getUndoListener());
         }
         document = (HTMLDocument) new HTMLEditorKit().createDefaultDocument();
         document.addUndoableEditListener(view.getUndoListener());
@@ -81,11 +74,38 @@ public class Controller {
     }
 
     public void openDocument() {
+        try {
+        view.selectHtmlTab();
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new HTMLFileFilter());
 
+        if (fileChooser.showOpenDialog(view) == JFileChooser.APPROVE_OPTION) {
+            currentFile = fileChooser.getSelectedFile();
+            resetDocument();
+            view.setTitle(currentFile.getName());
+
+            FileReader reader = new FileReader(currentFile);
+            new HTMLEditorKit().read(reader, document, 0);
+            view.resetUndo();
+        }
+        } catch (Exception e) {
+            ExceptionHandler.log(e);
+        }
     }
 
     public void saveDocument() {
-
+        view.selectHtmlTab();
+        if (currentFile == null) {
+            saveDocumentAs();
+        } else {
+            view.setTitle(currentFile.getName());
+            try {
+                FileWriter writer = new FileWriter(currentFile);
+                new HTMLEditorKit().write(writer, document, 0, document.getLength());
+            } catch (IOException | BadLocationException e) {
+                ExceptionHandler.log(e);
+            }
+        }
     }
 
     public void saveDocumentAs() {
