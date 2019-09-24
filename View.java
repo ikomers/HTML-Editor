@@ -9,7 +9,6 @@ import javax.swing.undo.UndoManager;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.StringReader;
 
 public class View extends JFrame implements ActionListener {
 
@@ -20,11 +19,11 @@ public class View extends JFrame implements ActionListener {
     private UndoManager undoManager = new UndoManager();
     private UndoListener undoListener = new UndoListener(undoManager);
 
-    public View()  {
+    public View() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException | IllegalAccessException e) {
-          ExceptionHandler.log(e);
+            ExceptionHandler.log(e);
         }
     }
 
@@ -80,18 +79,16 @@ public class View extends JFrame implements ActionListener {
         MenuHelper.initColorMenu(this, bar);
         MenuHelper.initFontMenu(this, bar);
         MenuHelper.initHelpMenu(this, bar);
-
         getContentPane().add(bar, BorderLayout.NORTH);
-
     }
 
     public void initEditor() {
         htmlTextPane.setContentType("text/html");
         JScrollPane scrollPane = new JScrollPane(htmlTextPane);
         tabbedPane.addTab("HTML", scrollPane);
-        JScrollPane plainScrollPane = new JScrollPane(plainTextPane);
-        tabbedPane.addTab("Текст", plainScrollPane);
-        tabbedPane.setPreferredSize(new Dimension(1500, 1800));
+        JScrollPane pane = new JScrollPane(plainTextPane);
+        tabbedPane.addTab("Текст", pane);
+        tabbedPane.setPreferredSize(new Dimension(300, 300));
         TabbedPaneChangeListener listener = new TabbedPaneChangeListener(this);
         tabbedPane.addChangeListener(listener);
         getContentPane().add(tabbedPane, BorderLayout.CENTER);
@@ -106,18 +103,26 @@ public class View extends JFrame implements ActionListener {
     public void selectedTabChanged() {
         if (tabbedPane.getSelectedIndex() == 0) {
             controller.setPlainText(plainTextPane.getText());
-        } else if (tabbedPane.getSelectedIndex() == 1){
+        } else if (tabbedPane.getSelectedIndex() == 1) {
             plainTextPane.setText(controller.getPlainText());
         }
         this.resetUndo();
     }
 
     public boolean canUndo() {
-       return undoManager.canUndo();
+        return undoManager.canUndo();
     }
 
     public boolean canRedo() {
         return undoManager.canRedo();
+    }
+
+    public void resetUndo() {
+        undoManager.discardAllEdits();
+    }
+
+    public UndoListener getUndoListener() {
+        return undoListener;
     }
 
     public void undo() {
@@ -134,19 +139,6 @@ public class View extends JFrame implements ActionListener {
         } catch (Exception e) {
             ExceptionHandler.log(e);
         }
-    }
-
-    public UndoListener getUndoListener() {
-        return undoListener;
-    }
-
-
-    /**
-     * Empties the undo manager sending each edit a
-     * <code>die</code> message in the process.
-     */
-    public void resetUndo() {
-        undoManager.discardAllEdits();
     }
 
     public boolean isHtmlTabSelected() {
